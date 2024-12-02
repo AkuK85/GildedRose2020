@@ -1,4 +1,4 @@
-package fi.oulu.tol.sqat.tests;
+package fi.oulu.tol.sqat;
 
 import static org.junit.Assert.*;
 
