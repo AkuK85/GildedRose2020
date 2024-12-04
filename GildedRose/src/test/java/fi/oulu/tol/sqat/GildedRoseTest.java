@@ -95,6 +95,34 @@ public class GildedRoseTest {
 	}
 
 	@Test
+	public void testBackStagePassesSellInAfter6daysPassed() {
+		GildedRose inn = new GildedRose();
+		inn.setItem(new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20));
+		for (int i = 0; i < 6; i++) {
+			inn.oneDay();
+		}
+		List<Item> items = inn.getItems();
+		int sellIn = items.get(0).getSellIn();
+		int quality = items.get(0).getQuality();
+		assertEquals("Failed sellIn for Backstage passes", 9, sellIn);
+		assertEquals("Failed quality for Backstage passes", 27, quality);
+	}
+
+	@Test
+	public void testBackStagePassesSellInAfter11daysPassed() {
+		GildedRose inn = new GildedRose();
+		inn.setItem(new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20));
+		for (int i = 0; i < 11; i++) {
+			inn.oneDay();
+		}
+		List<Item> items = inn.getItems();
+		int sellIn = items.get(0).getSellIn();
+		int quality = items.get(0).getQuality();
+		assertEquals("Failed sellIn for Backstage passes", 4, sellIn);
+		assertEquals("Failed quality for Backstage passes", 38, quality);
+	}
+
+	@Test
 	public void testConjuredManaCake() {
 		GildedRose inn = new GildedRose();
 		inn.setItem(new Item("Conjured Mana Cake", 3, 6));

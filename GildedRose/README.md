@@ -62,3 +62,9 @@ is a lot of room for improvement in the code coverage. Code coverage report can 
 
 ## ** Second implementation of tests **
 
+After implementing test to check listed items basic functionality i decided to start implementing tests for more complex
+cases like pushing the limits of the items and checking if the items are behaving as expected. There is also some items
+with special rules that need more specific tests to make sure they are working as expected. While adding these tests I
+decided it would be good to add some tests for certain limitations of the items mentioned in the pdf file provided with
+the project.
+
