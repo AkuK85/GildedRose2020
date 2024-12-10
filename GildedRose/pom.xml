@@ -36,6 +36,37 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- PITest plugin added here -->
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.17.2</version>
+                <configuration>
+                    <targetClasses>
+                        <param>fi.oulu.tol.sqat.*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>fi.oulu.tol.sqat.*</param>
+                    </targetTests>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.17.2</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
