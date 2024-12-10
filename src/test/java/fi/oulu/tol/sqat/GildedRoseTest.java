@@ -2,6 +2,10 @@ package fi.oulu.tol.sqat;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -297,5 +301,56 @@ public class GildedRoseTest {
 		assertTrue("Items list should be empty", items.isEmpty());
 	}
 
+	@Test
+	public void testMainMethod() throws NoSuchFieldException, IllegalAccessException {
+
+		// Capture the console output
+		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+		PrintStream originalOut = System.out;
+		System.setOut(new PrintStream(outContent));
+
+		try {
+			// Call the main method
+			GildedRose.main(new String[]{});
+			// Verify the console output
+			assertTrue(outContent.toString().contains("OMGHAI!"));
+			// Use reflection to access the private items field
+			Field itemsField = GildedRose.class.getDeclaredField("items");
+			itemsField.setAccessible(true);
+			List<Item> items = (List<Item>) itemsField.get(null);
+			// Verify the state of the items list
+			assertNotNull(items);
+			assertEquals(6, items.size());
+			// Verify the properties of the items
+			assertEquals("+5 Dexterity Vest", items.get(0).getName());
+			assertEquals(9, items.get(0).getSellIn());
+			assertEquals(19, items.get(0).getQuality());
+
+			assertEquals("Aged Brie", items.get(1).getName());
+			assertEquals(1, items.get(1).getSellIn());
+			assertEquals(1, items.get(1).getQuality());
+
+			assertEquals("Elixir of the Mongoose", items.get(2).getName());
+			assertEquals(4, items.get(2).getSellIn());
+			assertEquals(6, items.get(2).getQuality());
+
+			assertEquals("Sulfuras, Hand of Ragnaros", items.get(3).getName());
+			assertEquals(0, items.get(3).getSellIn());
+			assertEquals(80, items.get(3).getQuality());
+
+			assertEquals("Backstage passes to a TAFKAL80ETC concert", items.get(4).getName());
+			assertEquals(14, items.get(4).getSellIn());
+			assertEquals(21, items.get(4).getQuality());
+
+			assertEquals("Conjured Mana Cake", items.get(5).getName());
+			assertEquals(2, items.get(5).getSellIn());
+			assertEquals(5, items.get(5).getQuality());
+		} finally {
+			// Restore the original console output
+			System.setOut(originalOut);
+		}
+	}
+
 
 }
+

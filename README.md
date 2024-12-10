@@ -382,3 +382,146 @@ items in the list. The test can be found below:
 After re-running the test after latest implementation, the coverage rates were still at 100% as before. 
 
 
+## ** Mutation testing **
+
+Last part for this exercise wat to implement PITest tool to part of the testing arsenal. Since i was using maven as a
+test platform for this, i simply modified the pom.mxl file to add the PITest. After implementing the PITest, i ran it 
+in command console and got following results:
+
+![PITest1 results](/images/PITestR1.png)
+
+![PITest1 Detailed](/images/PITestR1Detailed1.png)
+
+![PITest1 Mutations](/images/PITestR1Mutations.png)
+
+## Mutation Testing Results
+
+### Package Summary
+- Line Coverage: 82% (47/57)
+- Mutation Coverage: 100% (48/50)
+- Test Strength: 100% (48/48)
+
+### Breakdown by Class
+
+GildedRose.java
+- Line Coverage: 77% (33/43)
+- Mutation Coverage: 95% (42/44)
+- Test Strength: 100% (42/42)
+
+Item.java
+- Line Coverage: 100% (14/14)
+- Mutation Coverage: 100% (6/6)
+- Test Strength: 100% (6/6)
+
+### Surviving Mutants
+
+- Line 16: Removed call to java/io/PrintStream::println → NO_COVERAGE
+  System.out.println("OMGHAI!");
+- Line 26: Removed call to i/oulu/tol/sqat/GildedRose::updateQuality → NO_COVERAGE
+  updateQuality();
+
+Mutation test results indicate that implemented tests did not cover the removal of the System.out.println() statement 
+and the updateQuality() method call.
+
+### ** Kill the Mutants! **
+
+To kill the remaining mutants and to improve the coverage, I first decided try to kill the mutant that was created by
+removing the updateQuality() method call. Trying to do this was not as easy i though it would be. While trying to 
+implement a test for this and banging my head against the wall for a while, I spent more time looking through the PITest
+results and the code itself. After a while I noticed that the main method was never covered by the tests I had implemented.
+Since main method contains both the System.out.println() statement and the updateQuality() method call, I came up with
+an idea to try kill both of the mutants with one test. This ended up being quite a challenge, but after a ton of reading,
+trial and error, I finally came up with a solution. Hardest part was to figure out how to test the main method without
+altering the SUT code, it took quite a while to find correct methods to circumvent the limitations of the SUT code.
+Final test implemented to kill the mutants can be found below:
+
+```java
+@Test
+	public void testMainMethod() throws NoSuchFieldException, IllegalAccessException {
+
+		// Capture the console output
+		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+		PrintStream originalOut = System.out;
+		System.setOut(new PrintStream(outContent));
+
+		try {
+			// Call the main method
+			GildedRose.main(new String[]{});
+			// Verify the console output
+			assertTrue(outContent.toString().contains("OMGHAI!"));
+			// Use reflection to access the private items field
+			Field itemsField = GildedRose.class.getDeclaredField("items");
+			itemsField.setAccessible(true);
+			List<Item> items = (List<Item>) itemsField.get(null);
+			// Verify the state of the items list
+			assertNotNull(items);
+			assertEquals(6, items.size());
+			// Verify the properties of the items
+			assertEquals("+5 Dexterity Vest", items.get(0).getName());
+			assertEquals(9, items.get(0).getSellIn());
+			assertEquals(19, items.get(0).getQuality());
+
+			assertEquals("Aged Brie", items.get(1).getName());
+			assertEquals(1, items.get(1).getSellIn());
+			assertEquals(1, items.get(1).getQuality());
+
+			assertEquals("Elixir of the Mongoose", items.get(2).getName());
+			assertEquals(4, items.get(2).getSellIn());
+			assertEquals(6, items.get(2).getQuality());
+
+			assertEquals("Sulfuras, Hand of Ragnaros", items.get(3).getName());
+			assertEquals(0, items.get(3).getSellIn());
+			assertEquals(80, items.get(3).getQuality());
+
+			assertEquals("Backstage passes to a TAFKAL80ETC concert", items.get(4).getName());
+			assertEquals(14, items.get(4).getSellIn());
+			assertEquals(21, items.get(4).getQuality());
+
+			assertEquals("Conjured Mana Cake", items.get(5).getName());
+			assertEquals(2, items.get(5).getSellIn());
+			assertEquals(5, items.get(5).getQuality());
+		} finally {
+			// Restore the original console output
+			System.setOut(originalOut);
+		}
+	}
+```
+
+__How it works__
+
+1. Capture Console Output: The test captures the console output by redirecting System.out to a ByteArrayOutputStream.
+2. Invoke Main Method: The main method of the GildedRose class is called.
+3. Verify Console Output: The test checks that the console output contains the expected string "OMGHAI!".
+4. Access Private Field: Using reflection, the test accesses the private items field in the GildedRose class.
+5. Verify Items List: The test verifies that the items list is correctly initialized with 6 items.
+6. Check Item Properties: The test checks the properties of each item in the list to ensure they are updated correctly.
+
+__Exceptions__
+
+- NoSuchFieldException: Thrown if the items field does not exist in the GildedRose class. This can happen if the field
+  name is misspelled or if the field is removed/renamed.
+- IllegalAccessException: Thrown if the items field is not accessible due a Java access control restriction. This can 
+  occur if the field is private and not made accessible via reflection.
+
+__Try-Catch-Finally Block__
+
+I ended up using a try-catch-finally block to ensure that the original System.out is restored even if an exception 
+occurs. The finally block guarantees that the original System.out is restored regardless of whether an exception is 
+thrown or not. This is important to avoid side effects in other tests or parts of the program that rely on the System.out.
+
+## ** Is it dead? **
+
+After implementing the test , I ran the PITest again to see if the mutants were killed. The results were as follows:
+
+![PITest2 results](/images/PITestR2.png)
+
+Well it seems this abomination of a test did the trick and killed the mutants. The coverage rates were 100% as I was 
+hoping for.
+
+## ** Final thoughts **
+
+This was a very interesting exercise and I learned a lot about testing and code coverage. I had never used PITest before
+and it was a very interesting tool to use. I also learned a lot about the limitations of the tests and how to work around
+them. I also learned a lot about the importance of code coverage and how to improve it. I think the most revaring part of
+this exercise was to implement the test for the main method. It was a very challenging task and I learned a lot from it.
+
