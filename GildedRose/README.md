@@ -339,3 +339,46 @@ now 100% by branches as well. The test can be found below:
 	}
 ```
 
+After implementing the test for Sulfuras quality not decreasing when sellIn is negative, the coverage was now 100% by
+branches as well. The final coverage report can be found below:
+
+![Final Code coverage report](/images/100_CoverageReached.png)
+
+
+## ** Loop testing **
+
+In the given instructions by the course teachers there is a task to test for loop GildedRose has in updateQuality() 
+method, the exact instructions are as follows:
+
+"Study the for-loop GildedRose has in method updateQuality(). Check that your current tests cover all the steps required
+in Loop Testing. Is it possible to cover all the steps required in Loop Testing without modifying the SUT code? 
+Write new tests until you cover the loop.  Is there a change in the code coverage metrics?"
+
+After studying the for-loop in the updateQuality() method, I can break down the behavior of the loop as follows:
+
+- The method iterates over each item in the items list.
+- It updates the quality and sellIn values based on specific rules for different types of items.
+- Special rules are applied to Aged Brie, Backstage passes and Sulfuras.
+- The quality of an item is never more than 50 or less than 0 (except for "Sulfuras, Hand of Ragnaros", which always has
+  a quality of 80).
+
+When going trough my tests I realised that I had already covered the loop in the updateQuality() method with the tests
+I had implemented. The tests were already covering all the steps required in Loop Testing, and only alteration I had to
+do at SUT code was to cut out part of the code that was causing a bug in the Aged Brie quality increase rate as mentioned 
+earlier. There is a only one test for a specific case that I can think and that is testing the updateQuality() method with
+no items in the list. I decided to implement this test to make sure the method is working as intended when there is no
+items in the list. The test can be found below:
+
+```java
+@Test
+	public void testUpdateQualityWithNoItems() {
+		GildedRose inn = new GildedRose();
+		inn.oneDay();
+		List<Item> items = inn.getItems();
+		assertTrue("Items list should be empty", items.isEmpty());
+	}
+```
+
+After re-running the test after latest implementation, the coverage rates were still at 100% as before. 
+
+

@@ -289,10 +289,13 @@ public class GildedRoseTest {
 		assertEquals("Failed quality for Sulfuras, Hand of Ragnaros", 80, quality);
 	}
 
-
-
-
-
+	@Test
+	public void testUpdateQualityWithNoItems() {
+		GildedRose inn = new GildedRose();
+		inn.oneDay();
+		List<Item> items = inn.getItems();
+		assertTrue("Items list should be empty", items.isEmpty());
+	}
 
 
 }
