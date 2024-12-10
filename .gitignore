@@ -1,6 +1,4 @@
-/GildedRose/target/
-/GildedRose/out/
-/GildedRose/.idea/
-/GildedRose/GildedRose.pdf
-/GildedRose/GildedRose.iml
-/GildedRose/LICENSE
+.idea/
+out/
+target/
+GildedRose.iml
